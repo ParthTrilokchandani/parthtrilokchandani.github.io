@@ -18,6 +18,11 @@
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none}
+
+/* HACKER GREEN TEXT SELECTION */
+::selection{background:var(--green);color:var(--bg);text-shadow:0 0 8px rgba(0,255,159,0.7)}
+::-moz-selection{background:var(--green);color:var(--bg);text-shadow:0 0 8px rgba(0,255,159,0.7)}
+
 .cursor{position:fixed;width:22px;height:22px;border:1.5px solid var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.12s,border-color 0.2s;mix-blend-mode:screen}
 .cursor-dot{position:fixed;width:4px;height:4px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
 #matrix-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:0.035;pointer-events:none}
@@ -228,9 +233,13 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
 .reveal{opacity:0;transform:translateY(16px);transition:opacity 0.65s ease,transform 0.65s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
+/* RESPONSIVE */
+@media(max-width:1200px){
+  .hero-terminal{display:none}
+}
 @media(max-width:960px){
   nav{padding:0 20px}#hero{padding:106px 22px 68px}.section-wrap{padding:68px 22px}
-  .hero-terminal{display:none}.about-grid{grid-template-columns:1fr;gap:36px}
+  .about-grid{grid-template-columns:1fr;gap:36px}
   .skills-grid{grid-template-columns:1fr 1fr}.projects-grid{grid-template-columns:1fr}
   .project-card.featured-proj{grid-column:span 1}.feat-inner{grid-template-columns:1fr}
   .edu-grid{grid-template-columns:1fr}.cert-grid{grid-template-columns:1fr 1fr}
@@ -253,7 +262,7 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
 <div class="cursor-dot" id="cursorDot"></div>
 
 <nav>
-  <div class="nav-logo"><span>&gt;_</span> Parth Trilokchandani </div>
+  <div class="nav-logo"><span>&gt;_</span> Parth Trilokchandani</div>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#skills">Skills</a></li>
@@ -283,8 +292,12 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
     <span class="hbadge hb-orange">⚔️ 4th — STANDOFF CTF (Intl)</span>
     <span class="hbadge hb-purple">🎯 TryHackMe Top 2%</span>
   </div>
-  
-
+  <div class="hero-stats">
+    <div><div class="hstat-num">2+</div><div class="hstat-label">Yrs Experience</div></div>
+    <div><div class="hstat-num">8.0</div><div class="hstat-label">MSc CGPA</div></div>
+    <div><div class="hstat-num">2</div><div class="hstat-label">Papers Published</div></div>
+    <div><div class="hstat-num">TOP 2%</div><div class="hstat-label">TryHackMe</div></div>
+  </div>
   <div class="hero-cta">
     <a href="#projects" class="btn-primary"><span>View Projects</span></a>
     <a href="#contact" class="btn-secondary">Get In Touch</a>
@@ -319,7 +332,7 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
     <div class="about-grid">
       <div>
         <h2 class="about-h2">Securing Systems.<br><em>Investigating Incidents.</em><br>Training the Next Gen.</h2>
-        <p class="about-text">I'm a <strong>Cyber Security professional</strong> holding an <strong>MSc in Cybersecurity &amp; Digital Forensics</strong> from Rashtriya Raksha University and the <strong>CEH V12 certification</strong> from EC-Council.</p>
+        <p class="about-text">I'm a <strong>Cyber Security professional</strong> holding an <strong>MSc in Cybersecurity &amp; Digital Forensics</strong> from Rashtriya Raksha University (8.0 CGPA) and the <strong>CEH V12 certification</strong> from EC-Council.</p>
         <p class="about-text">My experience spans <strong>ISO 27001 auditing</strong> and client readiness assessments, designing <strong>military-grade cyber security infrastructure</strong> for the Indian Army, conducting <strong>Dark Web &amp; Tor investigations</strong>, building <strong>Cyber Range environments</strong>, delivering corporate training, and co-authoring research in the <strong>Digital Forensics (4N6) journal</strong>.</p>
         <p class="about-text">I build tools in <strong>Python and Bash</strong>, write custom Volatility plugins, design CTF challenges, and rank in the <strong>Top 2% on TryHackMe</strong>.</p>
         <div class="info-grid">
@@ -567,13 +580,13 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
         <div class="edu-year">2022 — 2024</div>
         <div class="edu-degree">M.Sc. Cyber Security &amp; Digital Forensics</div>
         <div class="edu-uni">Rashtriya Raksha University</div>
-        <div class="edu-meta">Major Project: Dark Web Memory Forensics</div>
+        <div class="edu-meta">CGPA: 8.0 / 10 &nbsp;·&nbsp; Thesis: Dark Web Memory Forensics</div>
       </div>
       <div class="edu-card reveal">
         <div class="edu-year">2019 — 2022</div>
         <div class="edu-degree">Bachelor of Computer Applications (BCA)</div>
-        <div class="edu-uni">C.Z.M.G BCA College, Jamnagar</div>
-        <div class="edu-meta">Best Coder Award — Batch 2019–2022</div>
+        <div class="edu-uni">C.Z.M.G BCA College</div>
+        <div class="edu-meta">Score: 81.22% &nbsp;·&nbsp; Best Coder Award — Batch 2019–2022</div>
       </div>
     </div>
 
@@ -582,6 +595,10 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
       <div class="cert-item reveal"><div class="cert-icon">🏆</div><div class="cert-name">Certified Ethical Hacker V12</div><div class="cert-org">EC-Council</div><div class="cert-status cs-active">Certified ✓</div></div>
       <div class="cert-item reveal"><div class="cert-icon">🐧</div><div class="cert-name">Certified Linux Investigator</div><div class="cert-org">Linux Academy</div><div class="cert-status cs-active">Certified ✓</div></div>
       <div class="cert-item reveal"><div class="cert-icon">📱</div><div class="cert-name">Belkasoft Android Forensics</div><div class="cert-org">International · National 2024</div><div class="cert-status cs-active">Certified ✓</div></div>
+      <div class="cert-item reveal"><div class="cert-icon">🎓</div><div class="cert-name">Cyber Threat Intelligence 101</div><div class="cert-org">arcX · Foundation Level</div><div class="cert-status cs-active">Certified ✓</div></div>
+      <div class="cert-item reveal"><div class="cert-icon">🇮🇳</div><div class="cert-name">Ethical Hacking &amp; Penetration Testing</div><div class="cert-org">C-DAC · Govt of India (MeitY)</div><div class="cert-status cs-active">Certified ✓</div></div>
+      <div class="cert-item reveal"><div class="cert-icon">☁️</div><div class="cert-name">Cloud Computing (Intro)</div><div class="cert-org">EC-Council</div><div class="cert-status cs-active">Certified ✓</div></div>
+      <div class="cert-item reveal"><div class="cert-icon">🔐</div><div class="cert-name">Cybersecurity Essentials</div><div class="cert-org">Cisco Networking Academy</div><div class="cert-status cs-active">Certified ✓</div></div>
       <div class="cert-item reveal"><div class="cert-icon">🔴</div><div class="cert-name">CRTA</div><div class="cert-org">CyberWarFare Labs</div><div class="cert-status cs-pursuing">Pursuing</div></div>
       <div class="cert-item reveal"><div class="cert-icon">📋</div><div class="cert-name">ISO 27001 Lead Auditor</div><div class="cert-org">Lead Auditor</div><div class="cert-status cs-pursuing">Pursuing</div></div>
       <div class="cert-item reveal"><div class="cert-icon">🔒</div><div class="cert-name">CompTIA Security+</div><div class="cert-org">CompTIA</div><div class="cert-status cs-planned">Planned</div></div>
@@ -619,7 +636,7 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>TryHackMe
       </a>
     </div>
-    <div class="avail-bar"><div class="status-dot"></div>Open to Opportunities</div>
+    <div class="avail-bar"><div class="status-dot"></div>Available — CEH V12 · ISO 27001 Auditor · Open to Opportunities</div>
   </div>
 </section>
 
@@ -711,7 +728,7 @@ window.addEventListener('scroll',()=>{
         {cls:'t-out',   txt:'  Role    : Associate Information Security Officer'},
         {cls:'t-out',   txt:'  Company : DigiTruce'},
         {cls:'t-out',   txt:'  Degree  : MSc Cyber Security & Digital Forensics'},
-        {cls:'t-out',   txt:'  Uni     : Rashtriya Raksha University'},
+        {cls:'t-out',   txt:'  Uni     : Rashtriya Raksha University (8.0 CGPA)'},
         {cls:'t-cyan',  txt:'  Cert    : CEH V12 — EC-Council'},
         {cls:'t-grn',   txt:'  Status  : Open to Work'},
       ]
@@ -735,6 +752,10 @@ window.addEventListener('scroll',()=>{
         {cls:'t-grn',   txt:'  [✓] Certified Ethical Hacker V12 — EC-Council'},
         {cls:'t-grn',   txt:'  [✓] Certified Linux Investigator — Linux Academy'},
         {cls:'t-grn',   txt:'  [✓] Belkasoft Android Forensics — Intl Level 2024'},
+        {cls:'t-grn',   txt:'  [✓] Cyber Threat Intelligence 101 — arcX'},
+        {cls:'t-grn',   txt:'  [✓] Ethical Hacking & Pentesting — C-DAC (Govt)'},
+        {cls:'t-grn',   txt:'  [✓] Cloud Computing (Intro) — EC-Council'},
+        {cls:'t-grn',   txt:'  [✓] Cybersecurity Essentials — Cisco'},
         {cls:'t-cyan',  txt:'  [~] CRTA — CyberWarFare Labs (Pursuing)'},
         {cls:'t-cyan',  txt:'  [~] ISO 27001 Lead Auditor (Pursuing)'},
         {cls:'t-yellow',txt:'  [ ] CompTIA Security+ (Planned)'},
@@ -760,7 +781,7 @@ window.addEventListener('scroll',()=>{
         {cls:'t-bright',txt:'  [1] Dark Web Investigation & Volatility Plugin'},
         {cls:'t-out',   txt:'      Python · Volatility 3 · Tor Forensics · DFIR'},
         {cls:'t-bright',txt:'  [2] Cyber Range Platform'},
-        {cls:'t-out',   txt:'      Military-grade Cyber Range'},
+        {cls:'t-out',   txt:'      Military-grade threat simulation environment'},
         {cls:'t-bright',txt:'  [3] CTF Challenge Design Suite'},
         {cls:'t-out',   txt:'      National-level competition CTF framework'},
         {cls:'t-bright',txt:'  [4] Custom Port Scanner'},
