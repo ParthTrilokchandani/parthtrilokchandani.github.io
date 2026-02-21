@@ -35,6 +35,7 @@ html,body{
   font-family:var(--mono);
   overflow:hidden;
   user-select:none;
+  cursor:none;
 }
 
 /* ── Canvas ─────────────────────────── */
@@ -104,6 +105,7 @@ html,body{
   z-index:20;
   background:rgba(0,0,0,.78);
   backdrop-filter:blur(3px);
+  cursor:default;
 }
 
 .box{
@@ -187,6 +189,7 @@ kbd{
   cursor:pointer;
   transition:background .2s,box-shadow .2s;
   box-shadow:0 0 12px rgba(0,255,136,.15);
+  position:relative;z-index:1;
 }
 .btn:hover{
   background:rgba(0,255,136,.12);
@@ -242,14 +245,15 @@ kbd{
     <p class="sub">// defend the central server from cyber threats</p>
     <div class="instr">
       <div class="row"><kbd>WASD</kbd><kbd>↑↓←→</kbd>Move Security Node</div>
-      <div class="row"><kbd>SPACE</kbd>Fire Encryption Shot</div>
-      <div class="row"><kbd>SHIFT</kbd>Boost (cooldown 5s)</div>
+      <div class="row"><kbd>🖱 Mouse</kbd>Aim in any direction</div>
+      <div class="row"><kbd>SPACE</kbd><kbd>🖱 LClick</kbd>Fire / Hold to auto-fire</div>
+      <div class="row"><kbd>SHIFT</kbd>+ fire → 3-way Spread Shot &nbsp;<span style="color:var(--gdim);font-size:10px">(great for swarms!)</span></div>
       <div style="margin-top:8px">
         <div class="row" style="margin-bottom:4px"><span class="tag m">■ MALWARE</span>— slow · high HP · high damage</div>
         <div class="row" style="margin-bottom:4px"><span class="tag p">■ PHISHING</span>— fast · low HP · sneaky</div>
         <div class="row"><span class="tag d">■ DDoS BURST</span>— swarm · medium speed</div>
       </div>
-      <div style="margin-top:8px;font-size:11px;color:var(--gdim)">Build combos by chaining kills quickly for score multiplier!</div>
+      <div style="margin-top:8px;font-size:11px;color:var(--gdim)">Aim with mouse for precise diagonal shots! Build combos for score multiplier!</div>
     </div>
     <button class="btn" id="startBtn">[ INITIALIZE DEFENSE ]</button>
   </div>
@@ -310,6 +314,17 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup',   e => { keys[e.code] = false; });
 
+// ── Mouse state ──────────────────────────────────────────────────
+const mouse = { x: canvas.width/2, y: canvas.height/2, down: false };
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left;
+  mouse.y = e.clientY - r.top;
+});
+canvas.addEventListener('mousedown', e => { if(e.button===0) mouse.down=true;  });
+canvas.addEventListener('mouseup',   e => { if(e.button===0) mouse.down=false; });
+canvas.addEventListener('mouseleave',()=> { mouse.down=false; });
+
 // ── Utility helpers ──────────────────────────────────────────────
 const rand  = (a, b) => Math.random() * (b - a) + a;
 const randI = (a, b) => Math.floor(rand(a, b));
@@ -338,6 +353,37 @@ function glowCircle(x, y, r, color, lineWidth=2, blur=10){
   ctx.shadowBlur = blur;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Draw tactical crosshair at mouse position */
+function drawCrosshair(x, y, firing){
+  const col  = firing ? COL.yellow : COL.blue;
+  const size = 10;
+  const gap  = 4;
+  ctx.save();
+  ctx.strokeStyle = col;
+  ctx.lineWidth   = 1.5;
+  ctx.shadowColor = col;
+  ctx.shadowBlur  = firing ? 16 : 8;
+  // Four arms
+  ctx.beginPath();
+  ctx.moveTo(x - size - gap, y); ctx.lineTo(x - gap, y);
+  ctx.moveTo(x + gap, y);        ctx.lineTo(x + size + gap, y);
+  ctx.moveTo(x, y - size - gap); ctx.lineTo(x, y - gap);
+  ctx.moveTo(x, y + gap);        ctx.lineTo(x, y + size + gap);
+  ctx.stroke();
+  // Centre dot
+  ctx.fillStyle = col;
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(x, y, 1.5, 0, Math.PI*2);
+  ctx.fill();
+  // Outer circle
+  ctx.globalAlpha = 0.4;
+  ctx.beginPath();
+  ctx.arc(x, y, size + gap, 0, Math.PI*2);
   ctx.stroke();
   ctx.restore();
 }
@@ -487,52 +533,62 @@ class Player{
     this.boostSpeed = 9;
     this.boostCooldown = 0;
     this.boostDuration = 0;
-    this.BOOST_MAX   = 180; // frames of cooldown (~3s @60fps)
+    this.BOOST_MAX   = 180; // frames of cooldown
     this.BOOST_LEN   = 60;  // frames of boost
     this.shootCooldown = 0;
-    this.SHOOT_RATE    = 12; // frames between shots
-    this.angle = 0; // facing direction
+    this.SHOOT_RATE    = 10; // frames between shots (slightly faster)
+    this.angle = 0; // facing direction — always toward mouse
     this.pulseT= 0;
     this.active = true;
   }
 
   handleInput(){
+    // ── Movement ──────────────────────────────────────────
     let dx=0, dy=0;
     if(keys['ArrowUp']    || keys['KeyW']) dy=-1;
     if(keys['ArrowDown']  || keys['KeyS']) dy= 1;
     if(keys['ArrowLeft']  || keys['KeyA']) dx=-1;
     if(keys['ArrowRight'] || keys['KeyD']) dx= 1;
-
-    // Normalise diagonal
     if(dx!==0&&dy!==0){ dx*=0.707; dy*=0.707; }
 
-    // Boost
+    // ── Boost ──────────────────────────────────────────
     const boosting = keys['ShiftLeft']||keys['ShiftRight'];
     if(boosting && this.boostCooldown<=0 && this.boostDuration<=0){
       this.boostDuration = this.BOOST_LEN;
       this.boostCooldown = this.BOOST_MAX;
     }
-    if(this.boostDuration>0){
-      this.speed = this.boostSpeed;
-      this.boostDuration--;
-    } else {
-      this.speed = this.baseSpeed;
-    }
+    if(this.boostDuration>0){ this.speed=this.boostSpeed; this.boostDuration--; }
+    else                     { this.speed=this.baseSpeed; }
     if(this.boostCooldown>0) this.boostCooldown--;
 
     this.x = clamp(this.x + dx*this.speed, this.r, canvas.width  - this.r);
     this.y = clamp(this.y + dy*this.speed, this.r, canvas.height - this.r);
 
-    // Facing: point toward mouse or last movement direction
-    if(dx!==0||dy!==0) this.angle = Math.atan2(dy,dx);
+    // ── Aim toward mouse (always) ─────────────────────────
+    this.angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
 
-    // Shoot
+    // ── Shoot: Space key OR left mouse button (auto-fire on hold) ──
+    const wantsToShoot = keys['Space'] || mouse.down;
+    const spreadMode   = keys['ShiftLeft'] || keys['ShiftRight'];
+
     if(this.shootCooldown>0) this.shootCooldown--;
-    if(keys['Space'] && this.shootCooldown<=0){
+
+    if(wantsToShoot && this.shootCooldown<=0){
       this.shootCooldown = this.SHOOT_RATE;
-      return new Projectile(this.x,this.y,this.angle);
+
+      if(spreadMode){
+        // 3-way spread shot — great for diagonal clusters
+        const spread = 0.22; // radians between each shot
+        return [
+          new Projectile(this.x, this.y, this.angle - spread),
+          new Projectile(this.x, this.y, this.angle),
+          new Projectile(this.x, this.y, this.angle + spread),
+        ];
+      } else {
+        return [ new Projectile(this.x, this.y, this.angle) ];
+      }
     }
-    return null;
+    return [];
   }
 
   update(){ this.pulseT+=0.08; }
@@ -561,7 +617,7 @@ class Player{
     ctx.fill();
     ctx.restore();
 
-    // Direction indicator
+    // Direction arrow toward mouse
     const tipX = this.x + Math.cos(this.angle)*(this.r+10);
     const tipY = this.y + Math.sin(this.angle)*(this.r+10);
     ctx.save();
@@ -575,9 +631,20 @@ class Player{
     ctx.stroke();
     ctx.restore();
 
-    // Boost indicator arc
+    // Laser sight line to crosshair (subtle)
+    ctx.save();
+    ctx.strokeStyle='rgba(0,204,255,0.12)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([4,8]);
+    ctx.beginPath();
+    ctx.moveTo(tipX,tipY);
+    ctx.lineTo(mouse.x, mouse.y);
+    ctx.stroke();
+    ctx.restore();
+
+    // Boost cooldown arc
     if(this.boostCooldown>0){
-      const pct = 1 - (this.boostCooldown/this.BOOST_MAX);
+      const pct = 1-(this.boostCooldown/this.BOOST_MAX);
       ctx.save();
       ctx.strokeStyle='rgba(0,204,255,0.5)';
       ctx.lineWidth=3;
@@ -877,9 +944,9 @@ class Game{
     }
 
     // ── Player ──────────────────────────────────────────
-    const newBullet = this.player.handleInput();
+    const newBullets = this.player.handleInput();
     this.player.update();
-    if(newBullet) this.bullets.push(newBullet);
+    for(const b of newBullets) this.bullets.push(b);
 
     // ── Spawning ─────────────────────────────────────────
     this.spawnTimer++;
@@ -981,6 +1048,12 @@ class Game{
 
     // Player
     this.player.draw();
+
+    // Crosshair (drawn on top of everything, at mouse position)
+    if(this.state==='running'){
+      const firing = keys['Space'] || mouse.down;
+      drawCrosshair(mouse.x, mouse.y, firing);
+    }
 
     // Scan-line overlay
     ctx.save();
