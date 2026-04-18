@@ -234,23 +234,71 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
 .reveal{opacity:0;transform:translateY(16px);transition:opacity 0.65s ease,transform 0.65s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
+/* HAMBURGER */
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:1px solid var(--border2);padding:7px 9px;cursor:pointer;flex-shrink:0;transition:border-color 0.2s}
+.nav-hamburger:hover{border-color:var(--cyan)}
+.nav-hamburger span{display:block;width:20px;height:2px;background:var(--cyan);transition:all 0.3s}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* MOBILE NAV DRAWER */
+.mobile-nav{display:flex;flex-direction:column;position:fixed;top:62px;left:0;right:0;background:rgba(4,8,15,0.98);border-bottom:1px solid var(--border2);backdrop-filter:blur(14px);z-index:498;padding:0 24px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform 0.25s ease,opacity 0.25s ease}
+.mobile-nav.open{transform:translateY(0);opacity:1;pointer-events:auto}
+.mobile-nav a{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted2);text-decoration:none;letter-spacing:2px;text-transform:uppercase;padding:14px 0;border-bottom:1px solid var(--border);display:block;transition:color 0.2s}
+.mobile-nav a:last-child{border-bottom:none;padding-bottom:18px}
+.mobile-nav a:hover{color:var(--cyan)}
+
 /* RESPONSIVE */
 @media(max-width:1200px){
   .hero-terminal{display:none}
 }
 @media(max-width:960px){
-  nav{padding:0 20px}#hero{padding:106px 22px 68px}.section-wrap{padding:68px 22px}
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  #hero{padding:106px 22px 68px}
+  .section-wrap{padding:68px 22px}
+  .hero-role{max-width:100%}
+  .hero-name::after{max-width:100%}
   .about-grid{grid-template-columns:1fr;gap:36px}
-  .skills-grid{grid-template-columns:1fr 1fr}.projects-grid{grid-template-columns:1fr}
-  .project-card.featured-proj{grid-column:span 1}.feat-inner{grid-template-columns:1fr}
-  .edu-grid{grid-template-columns:1fr}.cert-grid{grid-template-columns:1fr 1fr}
-  .achieve-grid{grid-template-columns:1fr}.nav-links{display:none}
+  .skills-grid{grid-template-columns:1fr 1fr}
+  .projects-grid{grid-template-columns:1fr}
+  .project-card.featured-proj{grid-column:span 1}
+  .feat-inner{grid-template-columns:1fr}
+  .edu-grid{grid-template-columns:1fr}
+  .cert-grid{grid-template-columns:1fr 1fr}
+  .achieve-grid{grid-template-columns:1fr}
+  .hero-stats{gap:20px;flex-wrap:wrap}
   footer{padding:16px 20px;flex-direction:column;gap:6px;text-align:center}
 }
+@media(max-width:768px){
+  .nav-logo{font-size:11px;letter-spacing:1px}
+  .nav-status{font-size:9px;letter-spacing:0.5px}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+  .hstat-num{font-size:1.2rem}
+  .avail-bar{font-size:9px;padding:10px 16px;letter-spacing:1px;text-align:center}
+  .contact-link{padding:10px 16px;font-size:9px;letter-spacing:1px}
+  .proj-tags{gap:5px}
+}
 @media(max-width:580px){
-  .skills-grid{grid-template-columns:1fr}.hero-stats{gap:18px}
-  .cert-grid{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}
-  .hero-name{font-size:3.2rem}
+  .nav-logo{font-size:10px}
+  .skills-grid{grid-template-columns:1fr}
+  .skills-grid .skill-category{grid-column:span 1 !important}
+  .hero-stats{grid-template-columns:1fr 1fr;gap:14px}
+  .hstat-num{font-size:1rem}
+  .cert-grid{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr}
+  .hero-name{font-size:3rem;letter-spacing:2px}
+  .hero-badges{gap:7px}
+  .hbadge{font-size:8px;padding:4px 10px}
+  .hbadge svg{width:14px;height:14px}
+  .hero-cta{flex-direction:column;gap:10px}
+  .btn-primary,.btn-secondary{text-align:center;display:block;padding:13px 20px}
+  .avail-bar{flex-direction:column;gap:6px;text-align:center}
+  .contact-links{gap:8px}
+  .contact-link{flex:1;min-width:140px;justify-content:center}
+  .achieve-grid{gap:9px}
 }
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2)}::-webkit-scrollbar-thumb:hover{background:var(--cyan)}
 </style>
@@ -274,7 +322,20 @@ footer{border-top:1px solid var(--border);padding:20px 80px;display:flex;justify
     <li><a href="packet-defender.html">Game</a></li>
   </ul>
   <div class="nav-status"><div class="status-dot"></div>OPEN TO WORK</div>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#about" class="mobile-nav-link">About</a>
+  <a href="#skills" class="mobile-nav-link">Skills</a>
+  <a href="#experience" class="mobile-nav-link">Experience</a>
+  <a href="#projects" class="mobile-nav-link">Projects</a>
+  <a href="#education" class="mobile-nav-link">Education</a>
+  <a href="#contact" class="mobile-nav-link">Contact</a>
+  <a href="packet-defender.html" class="mobile-nav-link">Game</a>
+</div>
 
 <main>
 
@@ -903,6 +964,30 @@ window.addEventListener('scroll',()=>{
 
   // Focus terminal input when clicking terminal area
   document.querySelector('.hero-terminal').addEventListener('click',()=>input.focus());
+})();
+
+/* ── HAMBURGER MENU ── */
+(function(){
+  const hamburger=document.getElementById('navHamburger');
+  const mobileNav=document.getElementById('mobileNav');
+  if(!hamburger||!mobileNav)return;
+  hamburger.addEventListener('click',()=>{
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click',()=>{
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    });
+  });
+  // Close on outside click
+  document.addEventListener('click',e=>{
+    if(!hamburger.contains(e.target)&&!mobileNav.contains(e.target)){
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    }
+  });
 })();
 </script>
 </body>
